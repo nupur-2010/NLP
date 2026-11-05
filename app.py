@@ -153,16 +153,19 @@ def main():
     # Header with icon and title centered
     st.markdown("""
         <div class="main-header">
-            <div class="header-content">
-                <span class="shield-icon">
-                    <svg width="60" height="60" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M12 2L4 5V11.09C4 16.14 7.41 20.85 12 22C16.59 20.85 20 16.14 20 11.09V5L12 2Z" stroke="#3B82F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M12 8V12M12 16H12.01" stroke="#3B82F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                </span>
-                <div class="title-block">
-                    <h1>ScamShield</h1>
-                    <p>AI-Powered Scam Message & Phishing Language Analyzer</p>
+            <div class="header-wrapper">
+                <div class="shield-container">
+                    <div class="shield-glow"></div>
+                    <div class="shield-icon">
+                        <svg width="70" height="70" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2L4 5V11.09C4 16.14 7.41 20.85 12 22C16.59 20.85 20 16.14 20 11.09V5L12 2Z" stroke="#06b6d4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M12 8V12M12 16H12.01" stroke="#06b6d4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="brand-text">
+                    <h1 class="brand-title">ScamShield</h1>
+                    <p class="brand-subtitle">AI-Powered Threat Analysis Engine</p>
                 </div>
             </div>
         </div>
@@ -195,7 +198,6 @@ def main():
             
             risk_score = analysis.total_risk_score
             risk_level = get_risk_level(risk_score)
-            risk_color = get_risk_color(risk_score)
             
             st.markdown("---")
             st.markdown("### Analysis Results")
@@ -203,31 +205,17 @@ def main():
             metric_col1, metric_col2, metric_col3, metric_col4 = st.columns(4)
             
             with metric_col1:
+                st.metric("Risk Score", f"{risk_score}/100")
                 st.plotly_chart(create_gauge_chart(risk_score), use_container_width=True)
             
             with metric_col2:
-                st.markdown(f"""
-                    <div class="metric-card" style="border-left: 4px solid {risk_color};">
-                        <div class="metric-value" style="color: {risk_color};">{risk_level}</div>
-                        <div class="metric-label">Risk Level</div>
-                    </div>
-                """, unsafe_allow_html=True)
+                st.metric("Risk Level", risk_level)
             
             with metric_col3:
-                st.markdown(f"""
-                    <div class="metric-card">
-                        <div class="metric-value">{len(entities)}</div>
-                        <div class="metric-label">Entities Found</div>
-                    </div>
-                """, unsafe_allow_html=True)
+                st.metric("Entities Found", len(entities))
             
             with metric_col4:
-                st.markdown(f"""
-                    <div class="metric-card">
-                        <div class="metric-value">{len(analysis.suspicious_phrases)}</div>
-                        <div class="metric-label">Suspicious Phrases</div>
-                    </div>
-                """, unsafe_allow_html=True)
+                st.metric("Suspicious Phrases", len(analysis.suspicious_phrases))
             
             st.markdown("---")
             
@@ -290,11 +278,10 @@ def main():
                     st.success(exp)
             
             st.markdown("---")
-            
-            highlighted_text = highlight_suspicious(message_input, analysis.suspicious_phrases)
             st.markdown("#### Highlighted Message")
+            highlighted_text = highlight_suspicious(message_input, analysis.suspicious_phrases)
             st.markdown(
-                f'<div style="background-color: #1E293B; padding: 20px; border-radius: 12px; border: 1px solid #475569;">{highlighted_text}</div>',
+                f'<div class="highlighted-message">{highlighted_text}</div>',
                 unsafe_allow_html=True
             )
     
